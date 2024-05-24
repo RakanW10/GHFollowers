@@ -43,7 +43,24 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
     
     private func createTabBar() -> UITabBarController {
         let tabBar = UITabBarController()
+        
         UITabBar.appearance().tintColor = .systemGreen
+        
+        let blur = UIBlurEffect(style: .systemMaterial)
+        let blurView = UIVisualEffectView(effect: blur)
+        blurView.translatesAutoresizingMaskIntoConstraints = false
+        tabBar.tabBar.addSubview(blurView)
+        
+        NSLayoutConstraint.activate([
+            blurView.bottomAnchor.constraint(equalTo: tabBar.tabBar.bottomAnchor),
+            blurView.topAnchor.constraint(equalTo: tabBar.tabBar.topAnchor),
+            blurView.trailingAnchor.constraint(equalTo: tabBar.tabBar.trailingAnchor),
+            blurView.leadingAnchor.constraint(equalTo: tabBar.tabBar.leadingAnchor),
+        ])
+        
+        
+
+        
         tabBar.viewControllers = [createSearchVC(), createFavoritesVC()]
         return tabBar
     }

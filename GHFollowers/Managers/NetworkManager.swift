@@ -5,13 +5,14 @@
 //  Created by Rakan Alotibi on 10/11/1445 AH.
 //
 
-import Foundation
+import UIKit
 
 
 struct NetworkManager {
     
     private let decoder: JSONDecoder
     private let baseUrl = "https://api.github.com/"
+    let cache = NSCache<NSString, UIImage>()
     private init(){
         decoder = JSONDecoder()
         decoder.keyDecodingStrategy = .convertFromSnakeCase
