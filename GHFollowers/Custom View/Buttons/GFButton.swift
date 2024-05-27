@@ -11,6 +11,7 @@ class GFButton: UIButton {
 
     override init(frame: CGRect) {
         super.init(frame: frame)
+        configure()
     }
     
     // Storyboard initializer
@@ -25,6 +26,10 @@ class GFButton: UIButton {
         configure()
     }
     
+    func set(backgroundColor: UIColor, title: String) {
+        self.backgroundColor = backgroundColor
+        setTitle(title, for: .normal)
+    }
     
     private func configure() {
         // Here will be the constants ui properties
@@ -33,6 +38,4 @@ class GFButton: UIButton {
         titleLabel?.font        = UIFont.preferredFont(forTextStyle: .headline)
         translatesAutoresizingMaskIntoConstraints = false
     }
-        
-
 }

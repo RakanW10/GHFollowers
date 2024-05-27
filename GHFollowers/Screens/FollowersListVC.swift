@@ -7,14 +7,22 @@
 
 import UIKit
 
+
+protocol FollowerListVCDelegate: AnyObject {
+    func shouldUpdateDate(with newUsername: String)
+}
+
+
 class FollowersListVC: UIViewController {
     private enum Section{ case main }
     
-    let username: String
+    var username: String
     var followers: [Follower] = []
     var filteredFollowers: [Follower] = []
     var page = 1
     var hasMoreFollowers = true
+    var isSearching = false
+    
     private lazy var diffableDataSource: UICollectionViewDiffableDataSource<Section, Follower> = {
         var ds = UICollectionViewDiffableDataSource<Section, Follower>(collectionView: collectionView)
         { collectionView, indexPath, follower in
@@ -125,6 +133,13 @@ extension FollowersListVC: UICollectionViewDelegate {
             self.getFollowers(page: page)
         }
     }
+    
+    func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
+        let activeArray = isSearching ? filteredFollowers : followers
+        let follower = activeArray[indexPath.item]
+        let navController = UINavigationController(rootViewController: UserInfoVC(username: follower.login, delegate: self))
+        present(navController, animated: true)
+    }
 }
 
 
@@ -132,7 +147,7 @@ extension FollowersListVC: UICollectionViewDelegate {
 extension FollowersListVC: UISearchResultsUpdating, UISearchBarDelegate {
     func updateSearchResults(for searchController: UISearchController) {
         guard let filter = searchController.searchBar.text, !filter.isEmpty else { return }
-        
+        isSearching = true
         filteredFollowers = followers.filter { follower in
             follower.login.lowercased().contains(filter.lowercased())
         }
@@ -142,10 +157,23 @@ extension FollowersListVC: UISearchResultsUpdating, UISearchBarDelegate {
     func searchBarTextDidEndEditing(_ searchBar: UISearchBar) {
         guard let text = searchBar.text else {return}
         if text.isEmpty {
+            isSearching = false
             updateData(with: followers)
         }
     }
-    
-    
 }
 
+// MARK: FolloerListVCDelegate
+extension FollowersListVC: FollowerListVCDelegate {
+    func shouldUpdateDate(with newUsername: String) {
+        username = newUsername
+        self.title = newUsername
+        self.followers = []
+        self.filteredFollowers = []
+        self.page = 1
+        self.hasMoreFollowers = true
+        self.isSearching = false
+        collectionView.setContentOffset(.zero, animated: true) // scroll to top
+        getFollowers(page: page)
+    }
+}
