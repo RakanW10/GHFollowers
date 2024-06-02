@@ -9,7 +9,6 @@ import UIKit
 
 
 struct NetworkManager {
-    
     private let decoder: JSONDecoder
     private let baseUrl = "https://api.github.com/"
     let cache = NSCache<NSString, UIImage>()
